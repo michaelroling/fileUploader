@@ -3,7 +3,7 @@
 //  MKNetworkKit
 //
 //  Created by Mugunth Kumar (@mugunthkumar) on 11/11/11.
-//  Copyright (C) 2011-2020 by Steinlogic
+//  Copyright (C) 2011-2020 by Steinlogic Consulting and Training Pte Ltd
 
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -36,6 +36,11 @@
 #elif TARGET_OS_MAC
 #import <Cocoa/Cocoa.h>
 #import <AppKit/AppKit.h>
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#define DO_GCD_RETAIN_RELEASE 0
+#else
+#define DO_GCD_RETAIN_RELEASE 1
+#endif
 #endif
 
 #ifdef DEBUG
@@ -52,7 +57,7 @@
 #import "Categories/NSString+MKNetworkKitAdditions.h"
 #import "Categories/NSDictionary+RequestEncoding.h"
 #import "Categories/NSDate+RFC1123.h"
-#import "Categories/NSData+Base64.h"
+#import "Categories/NSData+MKBase64.h"
 
 #if TARGET_OS_IPHONE
 #import "Categories/UIAlertView+MKNetworkKitAdditions.h"

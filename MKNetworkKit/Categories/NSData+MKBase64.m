@@ -1,5 +1,5 @@
 //
-//  NSData+Base64.m
+//  NSData+MKNKBase64.m
 //  base64
 //
 //  Created by Matt Gallagher on 2009/06/03.
@@ -21,7 +21,7 @@
 //     distribution.
 //
 
-#import "NSData+Base64.h"
+#import "NSData+MKBase64.h"
 
 //
 // Mapping from 6 bit pattern to ASCII character.
@@ -81,7 +81,7 @@ void *NewBase64Decode(
 	size_t length,
 	size_t *outputLength)
 {
-	if (length == -1)
+	if (length == (size_t)-1)
 	{
 		length = strlen(inputBuffer);
 	}
@@ -120,11 +120,11 @@ void *NewBase64Decode(
 		// (Uses improved bounds checking suggested by Alexandre Colucci)
 		//
 		if(accumulateIndex >= 2)  
-			outputBuffer[j] = (accumulated[0] << 2) | (accumulated[1] >> 4);  
+			outputBuffer[j] = (unsigned char)(accumulated[0] << 2) | (accumulated[1] >> 4);
 		if(accumulateIndex >= 3)  
-			outputBuffer[j + 1] = (accumulated[1] << 4) | (accumulated[2] >> 2);  
+			outputBuffer[j + 1] = (unsigned char)(accumulated[1] << 4) | (accumulated[2] >> 2);
 		if(accumulateIndex >= 4)  
-			outputBuffer[j + 2] = (accumulated[2] << 6) | accumulated[3];
+			outputBuffer[j + 2] = (unsigned char)(accumulated[2] << 6) | accumulated[3];
 		j += accumulateIndex - 1;
 	}
 	
@@ -208,12 +208,12 @@ char *NewBase64Encode(
 			//
 			// Inner loop: turn 48 bytes into 64 base64 characters
 			//
-			outputBuffer[j++] = base64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
-			outputBuffer[j++] = base64EncodeLookup[((inputBuffer[i] & 0x03) << 4)
+			outputBuffer[j++] = (char)base64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
+			outputBuffer[j++] = (char)base64EncodeLookup[((inputBuffer[i] & 0x03) << 4)
 				| ((inputBuffer[i + 1] & 0xF0) >> 4)];
-			outputBuffer[j++] = base64EncodeLookup[((inputBuffer[i + 1] & 0x0F) << 2)
+			outputBuffer[j++] = (char)base64EncodeLookup[((inputBuffer[i + 1] & 0x0F) << 2)
 				| ((inputBuffer[i + 2] & 0xC0) >> 6)];
-			outputBuffer[j++] = base64EncodeLookup[inputBuffer[i + 2] & 0x3F];
+			outputBuffer[j++] = (char)base64EncodeLookup[inputBuffer[i + 2] & 0x3F];
 		}
 		
 		if (lineEnd == length)
@@ -234,10 +234,10 @@ char *NewBase64Encode(
 		//
 		// Handle the single '=' case
 		//
-		outputBuffer[j++] = base64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
-		outputBuffer[j++] = base64EncodeLookup[((inputBuffer[i] & 0x03) << 4)
+		outputBuffer[j++] = (char)base64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
+		outputBuffer[j++] = (char)base64EncodeLookup[((inputBuffer[i] & 0x03) << 4)
 			| ((inputBuffer[i + 1] & 0xF0) >> 4)];
-		outputBuffer[j++] = base64EncodeLookup[(inputBuffer[i + 1] & 0x0F) << 2];
+		outputBuffer[j++] = (char)base64EncodeLookup[(inputBuffer[i + 1] & 0x0F) << 2];
 		outputBuffer[j++] =	'=';
 	}
 	else if (i < length)
@@ -245,8 +245,8 @@ char *NewBase64Encode(
 		//
 		// Handle the double '=' case
 		//
-		outputBuffer[j++] = base64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
-		outputBuffer[j++] = base64EncodeLookup[(inputBuffer[i] & 0x03) << 4];
+		outputBuffer[j++] = (char)base64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
+		outputBuffer[j++] = (char)base64EncodeLookup[(inputBuffer[i] & 0x03) << 4];
 		outputBuffer[j++] = '=';
 		outputBuffer[j++] = '=';
 	}
@@ -262,7 +262,7 @@ char *NewBase64Encode(
 	return outputBuffer;
 }
 
-@implementation NSData (Base64)
+@implementation NSData (MKNKBase64)
 
 //
 // dataFromBase64String:
@@ -296,9 +296,9 @@ char *NewBase64Encode(
 //
 - (NSString *)base64EncodedString
 {
-	size_t outputLength;
+	size_t outputLength = 0;
 	char *outputBuffer =
-		NewBase64Encode([self bytes], [self length], true, &outputLength);
+		NewBase64Encode([self bytes], [self length], false, &outputLength);
 	
 	NSString *result =
 		[[NSString alloc]

@@ -106,13 +106,13 @@
     self.flOperation = [self.flUploadEngine postDataToServer:postParams path:@"/post.php"];
     [self.flOperation addData:image forKey:@"userfl" mimeType:@"image/jpeg" fileName:@"upload.jpg"];
     
-    [self.flOperation onCompletion:^(MKNetworkOperation *operation) {
+    [self.flOperation addCompletionHandler:^(MKNetworkOperation* operation) {
         NSLog(@"%@", [operation responseString]);
         /*   
             This is where you handle a successful 200 response
         */
     }     
-    onError:^(NSError *error) {
+    errorHandler:^(MKNetworkOperation *errorOp, NSError* error) {
         NSLog(@"%@", error);
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
                                                         message:[error localizedDescription]
