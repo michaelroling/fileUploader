@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "fileUploadEngine.h"
-
-@interface fileUploadDemoViewController : UIViewController <UIActionSheetDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+#import "ELCAssetSelectionDelegate.h"
+#import "ELCImagePickerController.h"
+@interface fileUploadDemoViewController : UIViewController <UIActionSheetDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate,ELCImagePickerControllerDelegate>
 
 @property (strong, nonatomic) fileUploadEngine *flUploadEngine;
 @property (strong, nonatomic) MKNetworkOperation *flOperation;
